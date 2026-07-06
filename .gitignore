@@ -1,0 +1,67 @@
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+
+# Python environment & cache
+.venv/
+venv/
+env/
+ENV/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# OS-generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Dependencies & Build directories
+node_modules/
+dist/
+dist-ssr/
+build/
+.vercel/
+
+# Project-specific logs & uploads
+uploads/
+logs/
+*.log
+backend.log
+test_output.log
+
+# IDE & editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Temporary audio, transcript, and output files
+data/output/
+output/
+temp_audio/
+*.wav.tmp
+*.mp3.tmp
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Benchmark outputs
+benchmark_outputs/
+data/output/comparison_report.csv
