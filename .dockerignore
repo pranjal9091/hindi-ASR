@@ -1,0 +1,17 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+frontend
+uploads/*
+!uploads/.gitkeep
+backend.log
+data/*
+.agents
+.gemini
+Dockerfile
+.dockerignore
+README.md
