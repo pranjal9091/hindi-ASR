@@ -30,6 +30,8 @@ def send_request(url, file_path):
             content_type = "audio/m4a"
         elif ext == ".aac":
             content_type = "audio/aac"
+        elif ext == ".webm":
+            content_type = "audio/webm"
             
         parts.append(f'Content-Type: {content_type}')
         parts.append('')

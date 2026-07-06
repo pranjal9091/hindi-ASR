@@ -268,11 +268,36 @@ async def transcribe(file: UploadFile = File(...)):
         logger.warning("Rejected upload: Empty file or no filename")
         raise HTTPException(status_code=400, detail="Invalid audio")
 
-    # Request validation: Extension check
-    allowed_extensions = {".wav", ".mp3", ".m4a", ".aac"}
+    # Extract extension and content type
     _, ext = os.path.splitext(file.filename)
+    content_type = file.content_type
+    
+    # 6. Add INFO logs that print Filename, Extension, Content-Type before validation
+    logger.info(f"Incoming upload - Filename: {file.filename}, Extension: {ext}, Content-Type: {content_type}")
+
+    # Request validation: Extension check
+    allowed_extensions = {".wav", ".mp3", ".m4a", ".aac", ".webm"}
     if ext.lower() not in allowed_extensions:
         logger.warning(f"Rejected upload: unsupported file extension {ext}")
+        raise HTTPException(status_code=400, detail="Invalid audio")
+
+    # Request validation: Content-Type check
+    allowed_content_types = {
+        "audio/webm",
+        "audio/webm;codecs=opus",
+        "audio/ogg",
+        "audio/wav",
+        "audio/x-wav",
+        "audio/mp3",
+        "audio/mpeg",
+        "audio/mp4",
+        "audio/aac",
+        "audio/m4a",
+        "audio/x-m4a"
+    }
+    normalized_content_type = content_type.lower().replace(" ", "") if content_type else ""
+    if normalized_content_type not in allowed_content_types:
+        logger.warning(f"Rejected upload: unsupported Content-Type {content_type}")
         raise HTTPException(status_code=400, detail="Invalid audio")
 
     # Request validation: Content-Length check
