@@ -1,5 +1,5 @@
-# Use NVIDIA CUDA 11.8 Runtime with cuDNN 8 as base
-FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+# Use NVIDIA CUDA 12.4.1 Runtime with cuDNN as base
+FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 
 # Avoid prompt interaction during installation
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -9,16 +9,24 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Set the working directory
 WORKDIR /app
 
-# Install Python 3, pip, and ffmpeg
+# Install software-properties-common, add deadsnakes PPA, and install Python 3.11, dev packages, and ffmpeg
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 \
-    python3-pip \
-    python3-dev \
+    software-properties-common \
+    && add-apt-repository -y ppa:deadsnakes/ppa \
+    && apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 \
+    python3.11-dev \
+    python3.11-distutils \
     ffmpeg \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Set python3 as the default python
-RUN ln -sf /usr/bin/python3 /usr/bin/python
+# Set python3.11 as the default python3 and python
+RUN ln -sf /usr/bin/python3.11 /usr/bin/python3 && \
+    ln -sf /usr/bin/python3.11 /usr/bin/python
+
+# Install pip for Python 3.11
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
 
 # Copy requirements
 COPY requirements.txt .
