@@ -299,7 +299,7 @@ export default function TranscriptCard({
       )}
       
       {/* Dynamic Content Display */}
-      {activeWorkspaceTab === "transcript" ? (
+      {activeWorkspaceTab === "transcript" && (
         <div className="document-content" tabIndex="0" aria-label="Transcript content display">
           {/* Version Toggle Segment inside workspace body */}
           <div className="version-toggle-row" style={{ alignSelf: "flex-start", marginBottom: "16px", maxWidth: "120px" }}>
