@@ -375,6 +375,17 @@ async def transcribe(file: UploadFile = File(...)):
         speech_analytics = analyze_clinical_speech(transcript_text, corrected_data.get("segments", []))
         clinical_data["speech_analytics"] = speech_analytics
 
+        # Read acoustic biomarkers
+        acoustic_json_path = os.path.join(temp_output_dir, "acoustic_biomarkers.json")
+        acoustic_biomarkers = None
+        if os.path.exists(acoustic_json_path):
+            try:
+                with open(acoustic_json_path, "r", encoding="utf-8") as af:
+                    acoustic_biomarkers = json.load(af)
+            except Exception as ae:
+                logger.error(f"Failed to read acoustic biomarkers json: {ae}")
+        clinical_data["acoustic_biomarkers"] = acoustic_biomarkers
+
         # Populate legacy SOAP fields with dementia-specific biomarkers
         clinical_data["soap_note"] = {
             "subjective": f"Subjective Cognitive Metrics: Memory indicators count: {speech_analytics['memory_indicators']['memory_loss_phrases_count']} ({', '.join(speech_analytics['memory_indicators']['memory_loss_phrases_examples']) if speech_analytics['memory_indicators']['memory_loss_phrases_examples'] else 'None'}). Uncertainty phrases count: {speech_analytics['memory_indicators']['uncertainty_phrases_count']}. Self-corrections count: {speech_analytics['memory_indicators']['self_corrections_count']}.",

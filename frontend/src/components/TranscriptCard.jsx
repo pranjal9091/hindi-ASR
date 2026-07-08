@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Copy, Download, RotateCcw, Check, Sparkles, Search, Sliders, Activity, AlertTriangle, Brain, Clock, Smile, Gauge, MessageSquare, BarChart2 } from "lucide-react";
+import { Copy, Download, RotateCcw, Check, Sparkles, Search, Sliders, Activity, AlertTriangle, Brain, Clock, Smile, Gauge, MessageSquare, BarChart2, Zap, ShieldCheck, Volume2, Info } from "lucide-react";
 import { exportToTXT, exportToPDF, exportToDOCX } from "../services/export";
 
 export default function TranscriptCard({ 
@@ -217,6 +217,15 @@ export default function TranscriptCard({
               title={!clinicalData?.speech_analytics ? "No speech analytics processed yet" : "View Speech & Cognitive Analytics"}
             >
               Speech Analytics
+            </button>
+            <button
+              type="button"
+              className={`workspace-tab-btn ${activeWorkspaceTab === "acoustic_biomarkers" ? "active" : ""}`}
+              onClick={() => setActiveWorkspaceTab("acoustic_biomarkers")}
+              disabled={!clinicalData || !clinicalData.acoustic_biomarkers}
+              title={!clinicalData?.acoustic_biomarkers ? "No acoustic biomarkers processed yet" : "View Acoustic Speech Features"}
+            >
+              Acoustic Biomarkers
             </button>
           </div>
           
@@ -981,6 +990,221 @@ export default function TranscriptCard({
                       <div className="emotion-bar-fill" style={{ width: `${Math.round((clinicalData?.speech_analytics?.emotion_indicators?.confused || 0) * 100)}%`, backgroundColor: "#a855f7" }}></div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeWorkspaceTab === "acoustic_biomarkers" && (
+        <div className="workspace-tab-pane active fade-in" role="tabpanel" aria-label="Acoustic biomarkers view">
+          <div className="document-content" tabIndex="0" aria-label="Acoustic biomarkers display">
+            <div className="clinical-header-box">
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <span className="clinical-meta-date">Acoustic Biomarker Profiling</span>
+                <h3 className="clinical-meta-id" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  Acoustic Speech Intelligence
+                </h3>
+              </div>
+              <span className="disclaimer-badge">
+                Research-Grade Features
+              </span>
+            </div>
+
+            <div className="clinical-disclaimer-card" style={{ background: "#eff6ff", borderLeftColor: "#2563eb", color: "#1e3a8a" }}>
+              <Info style={{ width: "1.2rem", height: "1.2rem", flexShrink: 0, marginTop: "2px" }} />
+              <div className="disclaimer-text" style={{ color: "#1e3a8a" }}>
+                <strong>Acoustic Screening Disclaimer:</strong> These features represent objective, low-level acoustic properties extracted directly from raw audio signal processing (pitch, energy, spectral, and cepstral features). They do not constitute a diagnosis and are designed for consumption by downstream machine learning assessment models.
+              </div>
+            </div>
+
+            <div className="analytics-grid">
+              {/* Pitch Card */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <Activity className="analytics-card-icon" />
+                  Fundamental Frequency (Pitch / F0)
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Mean Pitch</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.mean_pitch} Hz</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Median Pitch</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.median_pitch} Hz</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Pitch Standard Deviation</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.std_pitch} Hz</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Min Pitch</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.min_pitch} Hz</span>
+                </div>
+                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
+                  <span className="metrics-label">Max Pitch</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.max_pitch} Hz</span>
+                </div>
+              </div>
+
+              {/* Energy Card */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <Zap className="analytics-card-icon" />
+                  Voice Energy & Intensity
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">RMS Energy Mean</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.energy?.rms_mean}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">RMS Energy Std</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.energy?.rms_std}</span>
+                </div>
+                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
+                  <span className="metrics-label">Peak Amplitude Energy</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.energy?.peak_energy}</span>
+                </div>
+              </div>
+
+              {/* Speech Duration & Silence Ratio Card */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <Clock className="analytics-card-icon" />
+                  Speaking Duration & Silence
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Total Audio Duration</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.speech_duration?.total_audio_duration} s</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Estimated Speech Duration</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.speech_duration?.estimated_speech_duration} s</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Silence Duration</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.speech_duration?.silence_duration} s</span>
+                </div>
+                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
+                  <span className="metrics-label">Silence-to-Speech Ratio</span>
+                  <span className="metrics-val" style={{ color: "#b91c1c" }}>{(clinicalData?.acoustic_biomarkers?.speech_duration?.silence_ratio * 100).toFixed(1)}%</span>
+                </div>
+                <div className="emotion-bar-row" style={{ marginTop: "12px" }}>
+                  <div className="emotion-label-row">
+                    <span>Silence Proportion</span>
+                    <span>{(clinicalData?.acoustic_biomarkers?.speech_duration?.silence_ratio * 100).toFixed(1)}%</span>
+                  </div>
+                  <div className="emotion-bar-track">
+                    <div className="emotion-bar-fill" style={{ width: `${Math.min(100, (clinicalData?.acoustic_biomarkers?.speech_duration?.silence_ratio || 0) * 100)}%`, backgroundColor: "#b91c1c" }}></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Prosody Card */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <Volume2 className="analytics-card-icon" />
+                  Speech Prosody & Variation
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Voiced Speech Ratio</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.prosody?.voiced_ratio}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Pitch Variability (Std/Mean)</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.prosody?.pitch_variability}</span>
+                </div>
+                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
+                  <span className="metrics-label">Energy Variability (Std/Mean)</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.prosody?.energy_variability}</span>
+                </div>
+              </div>
+
+              {/* Stability Card */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <ShieldCheck className="analytics-card-icon" />
+                  Voice Stability & Articulation Consistency
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Articulation Consistency</span>
+                  <span className="metrics-val" style={{ color: "#0d9488" }}>{clinicalData?.acoustic_biomarkers?.stability?.articulation_consistency}</span>
+                </div>
+                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
+                  <span className="metrics-label">Pause Energy Variance</span>
+                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.stability?.pause_energy_variance}</span>
+                </div>
+              </div>
+
+              {/* Spectral Features Card */}
+              <div className="analytics-card" style={{ gridColumn: "span 2" }}>
+                <h4 className="analytics-card-title">
+                  <BarChart2 className="analytics-card-icon" />
+                  Spectral Features (Acoustic Envelope)
+                </h4>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                  <div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Spectral Centroid (Mean)</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_centroid?.mean} Hz</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Spectral Centroid (Std)</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_centroid?.std} Hz</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Spectral Bandwidth (Mean)</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_bandwidth?.mean} Hz</span>
+                    </div>
+                    <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
+                      <span className="metrics-label">Spectral Bandwidth (Std)</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_bandwidth?.std} Hz</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Spectral Rolloff (Mean)</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_rolloff?.mean} Hz</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Spectral Rolloff (Std)</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_rolloff?.std} Hz</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Zero Crossing Rate (Mean)</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.zero_crossing_rate?.mean}</span>
+                    </div>
+                    <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
+                      <span className="metrics-label">Zero Crossing Rate (Std)</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.zero_crossing_rate?.std}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* MFCC Coefficient Statistics Card */}
+              <div className="analytics-card" style={{ gridColumn: "span 2" }}>
+                <h4 className="analytics-card-title">
+                  <Sliders className="analytics-card-icon" />
+                  Mel-Frequency Cepstral Coefficients (MFCC 1–13 Statistics)
+                </h4>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", fontSize: "0.8rem" }}>
+                  {Object.entries(clinicalData?.acoustic_biomarkers?.mfcc || {}).map(([coef, stats], idx) => (
+                    <div key={idx} style={{ padding: "8px", background: "#f9fafb", borderRadius: "6px", border: "1px solid #e5e7eb" }}>
+                      <div style={{ fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
+                        {coef.toUpperCase().replace("_", " ")}
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", color: "#6b7280" }}>
+                        <span>Mean:</span>
+                        <span style={{ fontWeight: 500, color: "#111827" }}>{stats.mean}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", color: "#6b7280" }}>
+                        <span>Std:</span>
+                        <span style={{ fontWeight: 500, color: "#111827" }}>{stats.std}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

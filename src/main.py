@@ -48,6 +48,24 @@ def transcribe_audio(
     preprocess_duration = time.time() - start_time
     print(f"Preprocessing took {preprocess_duration:.2f} seconds.\n")
     
+    # Step 1.5: Acoustic Biomarker Extraction
+    print("=== STEP 1.5: Acoustic Biomarker Extraction ===")
+    acoustic_data = None
+    try:
+        from acoustic_biomarkers import extract_acoustic_biomarkers
+        acoustic_data = extract_acoustic_biomarkers(preprocessed_path)
+        print("Acoustic biomarkers extracted successfully.")
+    except Exception as e:
+        # Never crash ASR, log exception and continue normally
+        import logging
+        logger = logging.getLogger("hindi-asr-backend")
+        logger.exception("Acoustic biomarker extraction failed")
+        print(f"Failed to extract acoustic biomarkers: {e}")
+        
+    acoustic_json_path = os.path.join(output_dir, "acoustic_biomarkers.json")
+    utils.save_json(acoustic_data, acoustic_json_path)
+    print(f"Saved acoustic biomarkers to: {acoustic_json_path}\n")
+    
     # Step 2: Load Faster-Whisper Model (if not provided)
     if model is None:
         print("=== STEP 2: Loading Faster-Whisper Model ===")
