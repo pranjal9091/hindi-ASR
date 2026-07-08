@@ -386,6 +386,41 @@ async def transcribe(file: UploadFile = File(...)):
                 logger.error(f"Failed to read acoustic biomarkers json: {ae}")
         clinical_data["acoustic_biomarkers"] = acoustic_biomarkers
 
+        # Feature Fusion & Model Prediction
+        from src.feature_fusion import build_feature_vector
+        from src.model_adapter import predict_dementia
+        
+        fusion_start = time.time()
+        meta_dict = {
+            "session_id": request_id,
+            "timestamp": time.time(),
+            "language": corrected_data.get("language", "hi"),
+            "audio_duration": corrected_data.get("duration", 0.0)
+        }
+        
+        fusion_result = build_feature_vector(
+            transcript=transcript_text,
+            speech_analytics=speech_analytics,
+            acoustic_biomarkers=acoustic_biomarkers,
+            metadata=meta_dict
+        )
+        feature_vector = fusion_result["features"]
+        
+        predict_start = time.time()
+        dementia_prediction = predict_dementia(feature_vector)
+        predict_duration_ms = (time.time() - predict_start) * 1000.0
+        extraction_duration_ms = (time.time() - start_time - (predict_duration_ms / 1000.0)) * 1000.0
+        
+        clinical_data["feature_vector"] = feature_vector
+        clinical_data["dementia_prediction"] = dementia_prediction
+        
+        logger.info(
+            f"Feature Fusion Statistics - Feature count: {len(feature_vector)}, "
+            f"Missing values replaced: {fusion_result['_missing_replacements_count']}, "
+            f"Feature extraction time: {extraction_duration_ms:.2f} ms, "
+            f"Model inference time: {predict_duration_ms:.2f} ms"
+        )
+
         # Populate legacy SOAP fields with dementia-specific biomarkers
         clinical_data["soap_note"] = {
             "subjective": f"Subjective Cognitive Metrics: Memory indicators count: {speech_analytics['memory_indicators']['memory_loss_phrases_count']} ({', '.join(speech_analytics['memory_indicators']['memory_loss_phrases_examples']) if speech_analytics['memory_indicators']['memory_loss_phrases_examples'] else 'None'}). Uncertainty phrases count: {speech_analytics['memory_indicators']['uncertainty_phrases_count']}. Self-corrections count: {speech_analytics['memory_indicators']['self_corrections_count']}.",

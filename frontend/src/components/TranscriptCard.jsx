@@ -227,6 +227,15 @@ export default function TranscriptCard({
             >
               Acoustic Biomarkers
             </button>
+            <button
+              type="button"
+              className={`workspace-tab-btn ${activeWorkspaceTab === "dementia_assessment" ? "active" : ""}`}
+              onClick={() => setActiveWorkspaceTab("dementia_assessment")}
+              disabled={!clinicalData || !clinicalData.dementia_prediction}
+              title={!clinicalData?.dementia_prediction ? "No predictions processed yet" : "View Dementia Assessment"}
+            >
+              Dementia Assessment
+            </button>
           </div>
           
           {isFinished && (
@@ -1208,6 +1217,133 @@ export default function TranscriptCard({
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {activeWorkspaceTab === "dementia_assessment" && (
+        <div className="workspace-tab-pane active fade-in" role="tabpanel" aria-label="Dementia assessment predictions view">
+          <div className="document-content" tabIndex="0" aria-label="Dementia assessment display">
+            <div className="clinical-header-box">
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <span className="clinical-meta-date">Model Classification Interface</span>
+                <h3 className="clinical-meta-id" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  Dementia Cognitive Domain Assessment
+                </h3>
+              </div>
+              <span className="disclaimer-badge">
+                Prediction Platform
+              </span>
+            </div>
+
+            {/* Check if predictions are null (awaiting model integration) */}
+            {(!clinicalData?.dementia_prediction || 
+              Object.values(clinicalData.dementia_prediction).every(val => val === null)) ? (
+              
+              <div className="clinical-disclaimer-card" style={{ 
+                background: "#f0fdf4", 
+                borderLeftColor: "#16a34a", 
+                color: "#166534", 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                padding: "48px 24px", 
+                textAlign: "center",
+                gap: "16px",
+                borderRadius: "8px",
+                marginTop: "24px"
+              }}>
+                <Brain style={{ width: "4rem", height: "4rem", color: "#16a34a", animation: "pulse 2s infinite" }} />
+                <h4 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0, color: "#14532d" }}>
+                  Awaiting Model Integration
+                </h4>
+                <p style={{ fontSize: "0.9rem", color: "#166534", maxWidth: "480px", margin: 0, lineHeight: 1.5 }}>
+                  The Feature Fusion Engine has successfully compiled all 45+ transcript and acoustic biomarkers. The system is fully integrated and waiting for the founder's research-grade dementia classifier model.
+                </p>
+                <div style={{ fontSize: "0.8rem", background: "#dcfce7", color: "#15803d", padding: "6px 12px", borderRadius: "20px", fontWeight: 500 }}>
+                  Standardized Feature Vector Ready
+                </div>
+              </div>
+
+            ) : (
+
+              <div className="analytics-grid" style={{ marginTop: "24px" }}>
+                {/* When predictions become available later, render progress bars/cards */}
+                <div className="analytics-card" style={{ gridColumn: "span 2" }}>
+                  <h4 className="analytics-card-title">
+                    <Sparkles className="analytics-card-icon" />
+                    Cognitive Domains Prediction Results
+                  </h4>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginTop: "16px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                      <div className="emotion-bar-row">
+                        <div className="emotion-label-row">
+                          <strong>Language Index</strong>
+                          <span>{Math.round(clinicalData.dementia_prediction.language * 100)}%</span>
+                        </div>
+                        <div className="emotion-bar-track">
+                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.language * 100)}%`, backgroundColor: "#4f46e5" }}></div>
+                        </div>
+                      </div>
+
+                      <div className="emotion-bar-row">
+                        <div className="emotion-label-row">
+                          <strong>Fluency Index</strong>
+                          <span>{Math.round(clinicalData.dementia_prediction.fluency * 100)}%</span>
+                        </div>
+                        <div className="emotion-bar-track">
+                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.fluency * 100)}%`, backgroundColor: "#06b6d4" }}></div>
+                        </div>
+                      </div>
+
+                      <div className="emotion-bar-row">
+                        <div className="emotion-label-row">
+                          <strong>Attention Index</strong>
+                          <span>{Math.round(clinicalData.dementia_prediction.attention * 100)}%</span>
+                        </div>
+                        <div className="emotion-bar-track">
+                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.attention * 100)}%`, backgroundColor: "#eab308" }}></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                      <div className="emotion-bar-row">
+                        <div className="emotion-label-row">
+                          <strong>Orientation Index</strong>
+                          <span>{Math.round(clinicalData.dementia_prediction.orientation * 100)}%</span>
+                        </div>
+                        <div className="emotion-bar-track">
+                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.orientation * 100)}%`, backgroundColor: "#8b5cf6" }}></div>
+                        </div>
+                      </div>
+
+                      <div className="emotion-bar-row">
+                        <div className="emotion-label-row">
+                          <strong>Memory Recall Index</strong>
+                          <span>{Math.round(clinicalData.dementia_prediction.memory * 100)}%</span>
+                        </div>
+                        <div className="emotion-bar-track">
+                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.memory * 100)}%`, backgroundColor: "#ec4899" }}></div>
+                        </div>
+                      </div>
+
+                      <div className="emotion-bar-row">
+                        <div className="emotion-label-row">
+                          <strong>Overall Assessment Score</strong>
+                          <span>{Math.round(clinicalData.dementia_prediction.overall * 100)}%</span>
+                        </div>
+                        <div className="emotion-bar-track">
+                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.overall * 100)}%`, backgroundColor: "#10b981" }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            )}
           </div>
         </div>
       )}
