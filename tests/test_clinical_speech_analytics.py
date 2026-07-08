@@ -159,5 +159,61 @@ class TestClinicalSpeechAnalytics(unittest.TestCase):
         self.assertTrue(any("Monday" in w and "Wednesday" in w for w in warnings))
         self.assertTrue(any("2020" in w and "2024" in w for w in warnings))
 
+    def test_dementia_specific_biomarkers(self):
+        # Test case specifically designed for the new biomarkers
+        transcript = "मैंने सोमवार को दवाई ली थी। नहीं... मेरा मतलब बुधवार था। शायद 2020 था... शायद 2024 था। मैं उसे भूल गया।"
+        mock_segments = [
+            {
+                "id": 0, "start": 0.0, "end": 8.0, "text": transcript,
+                "words": [
+                    {"word": "मैंने", "start": 0.0, "end": 0.4},
+                    {"word": "सोमवार", "start": 0.5, "end": 1.0},
+                    {"word": "को", "start": 1.1, "end": 1.3},
+                    {"word": "दवाई", "start": 1.4, "end": 1.8},
+                    {"word": "ली", "start": 1.9, "end": 2.1},
+                    {"word": "थी", "start": 2.2, "end": 2.4},
+                    # Pause 1.1s (significant)
+                    {"word": "नहीं...", "start": 3.5, "end": 4.0},
+                    {"word": "मेरा", "start": 4.1, "end": 4.4},
+                    {"word": "मतलब", "start": 4.5, "end": 4.9},
+                    {"word": "बुधवार", "start": 5.0, "end": 5.5},
+                    {"word": "था", "start": 5.6, "end": 5.8},
+                    # Pause 0.4s (hesitation)
+                    {"word": "शायद", "start": 6.2, "end": 6.7},
+                    {"word": "2020", "start": 6.8, "end": 7.3},
+                    {"word": "था", "start": 7.4, "end": 7.6},
+                    {"word": "भूल", "start": 7.7, "end": 7.9},
+                    {"word": "गया", "start": 8.0, "end": 8.0}
+                ]
+            }
+        ]
+        
+        result = analyze_clinical_speech(transcript, mock_segments)
+        
+        # 1. Pause metrics verification
+        self.assertIn("hesitation_pauses_count", result["pause_metrics"])
+        self.assertIn("significant_pauses_count", result["pause_metrics"])
+        self.assertIn("longest_pause_timestamps", result["pause_metrics"])
+        
+        # 2. Speech fluency verification
+        self.assertIn("articulation_rate", result["speech_fluency"])
+        self.assertIn("sentence_length_variance", result["speech_fluency"])
+        
+        # 3. Repetition metrics verification
+        self.assertIn("perseveration_score", result["repetitions"])
+        
+        # 4. Lexical features verification
+        self.assertIn("moving_average_ttr", result["lexical_features"])
+        self.assertGreater(result["lexical_features"]["moving_average_ttr"], 0.0)
+        
+        # 5. Memory indicators verification
+        self.assertGreater(result["memory_indicators"]["memory_loss_phrases_count"], 0)
+        self.assertGreater(result["memory_indicators"]["uncertainty_phrases_count"], 0)
+        self.assertGreater(result["memory_indicators"]["self_corrections_count"], 0)
+        
+        # 6. Executive function verification
+        self.assertGreater(len(result["executive_function"]["timeline_inconsistencies"]), 0)
+
 if __name__ == "__main__":
     unittest.main()
+
