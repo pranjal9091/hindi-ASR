@@ -29,7 +29,7 @@ def calculate_mattr(words, window_size=20):
 
 def analyze_clinical_speech(transcript: str, segments: list) -> dict:
     """
-    Computes transcript-based cognitive biomarkers and pause metrics used in dementia screening.
+    Computes transcript-based cognitive speech biomarkers used in dementia screening.
     Runs immediately after transcription and before JSON response.
     
     Args:
@@ -94,8 +94,7 @@ def analyze_clinical_speech(transcript: str, segments: list) -> dict:
                 "recall_difficulty_indicators_count": 0,
                 "recall_difficulty_locations": [],
                 "memory_indicator_count": 0,
-                "detected_phrases": [],
-                "risk_score": 0.0
+                "detected_phrases": []
             },
             "executive_function": {
                 "timeline_inconsistencies": [],
@@ -146,22 +145,6 @@ def analyze_clinical_speech(transcript: str, segments: list) -> dict:
             },
             "timeline_consistency": {
                 "warnings": []
-            },
-            "emotion_indicators": {
-                "neutral": 1.0,
-                "anxious": 0.0,
-                "sad": 0.0,
-                "frustrated": 0.0,
-                "confused": 0.0,
-                "dominant_emotion": "Neutral"
-            },
-            "clinical_summary": {
-                "memory_risk": "Low",
-                "language_risk": "Low",
-                "speech_risk": "Low",
-                "overall_cognitive_risk": "Low",
-                "explanation": "No transcript available.",
-                "disclaimer": "This is an AI-generated cognitive screening summary for research/reference only."
             }
         }
         return empty_response
@@ -438,10 +421,11 @@ def analyze_clinical_speech(transcript: str, segments: list) -> dict:
         for i in range(len(words_list) - 1):
             w1 = words_list[i]
             w2 = words_list[i+1]
+            content_match = content_word_pattern.match(w2["word"])
             gap = w2["start"] - w1["end"]
             
             # Case 1: Long pause before a content word
-            if gap > 1.2 and content_word_pattern.match(w2["word"]):
+            if gap > 1.2 and content_match:
                 recall_difficulties.append({
                     "word": w2["word"],
                     "start": round(w2["start"], 2),
@@ -468,8 +452,7 @@ def analyze_clinical_speech(transcript: str, segments: list) -> dict:
         "recall_difficulty_locations": recall_difficulties[:5],
         # Legacy support
         "memory_indicator_count": len(detected_mem_loss),
-        "detected_phrases": list(set(detected_mem_loss)),
-        "risk_score": round(min(10.0, len(detected_mem_loss) * 3.33), 1)
+        "detected_phrases": list(set(detected_mem_loss))
     }
 
     # ==========================================
@@ -536,79 +519,6 @@ def analyze_clinical_speech(transcript: str, segments: list) -> dict:
     }
 
     # ==========================================
-    # 8. CLINICAL COGNITIVE SUMMARY
-    # ==========================================
-    mem_risk = "Low"
-    mem_reasons = []
-    if len(detected_mem_loss) >= 3 or len(timeline_warnings) >= 2:
-        mem_risk = "High"
-        mem_reasons.append(f"Multiple memory loss phrases ({len(detected_mem_loss)}) or timeline conflicts detected")
-    elif len(detected_mem_loss) > 0 or timeline_warnings or len(detected_uncertainty) >= 2:
-        mem_risk = "Medium"
-        if len(detected_mem_loss) > 0:
-            mem_reasons.append("Memory loss indicators present")
-        if timeline_warnings:
-            mem_reasons.append("Chronological timeline inconsistencies")
-        if len(detected_uncertainty) >= 2:
-            mem_reasons.append("Frequent verbal uncertainty")
-    else:
-        mem_reasons.append("Normal memory retrieval profile")
-
-    lang_risk = "Low"
-    lang_reasons = []
-    if ttr_val < 0.45 and (total_fillers_count >= 10 or len(phrase_rep_list) >= 3):
-        lang_risk = "High"
-        lang_reasons.append("Reduced lexical diversity paired with high repetition or filler rates")
-    elif ttr_val < 0.55 or total_fillers_count >= 5 or total_rep_events >= 3:
-        lang_risk = "Medium"
-        if ttr_val < 0.55:
-            lang_reasons.append("Moderate type-token ratio")
-        if total_fillers_count >= 5:
-            lang_reasons.append("Frequent filler insertions")
-        if total_rep_events >= 3:
-            lang_reasons.append("Elevated verbal repetitions")
-    else:
-        lang_reasons.append("Vocabulary diversity and fluency within normal ranges")
-
-    speech_risk = "Low"
-    speech_reasons = []
-    if avg_pause > 1.8 or pause_ratio_val > 0.35 or len(long_pauses) >= 3:
-        speech_risk = "High"
-        speech_reasons.append("Significantly elevated pause times and silence ratios")
-    elif avg_pause > 1.0 or pause_ratio_val > 0.18 or len(long_pauses) >= 1:
-        speech_risk = "Medium"
-        if avg_pause > 1.0:
-            speech_reasons.append("Moderate conversational pauses")
-        if pause_ratio_val > 0.18:
-            speech_reasons.append("Increased silence-to-speech ratio")
-        if len(long_pauses) >= 1:
-            speech_reasons.append("Long pauses (>2.0s) present")
-    else:
-        speech_reasons.append("Speech rate and rhythm within typical conversational bounds")
-
-    risk_levels = [mem_risk, lang_risk, speech_risk]
-    overall_cognitive_risk = "Low"
-    if risk_levels.count("High") >= 2 or mem_risk == "High":
-        overall_cognitive_risk = "High"
-    elif "High" in risk_levels or "Medium" in risk_levels:
-        overall_cognitive_risk = "Medium"
-
-    explanation_parts = []
-    explanation_parts.append(f"Memory: {mem_risk} ({', '.join(mem_reasons)}).")
-    explanation_parts.append(f"Language: {lang_risk} ({', '.join(lang_reasons)}).")
-    explanation_parts.append(f"Speech: {speech_risk} ({', '.join(speech_reasons)}).")
-    explanation_summary = " ".join(explanation_parts)
-
-    clinical_summary = {
-        "memory_risk": mem_risk,
-        "language_risk": lang_risk,
-        "speech_risk": speech_risk,
-        "overall_cognitive_risk": overall_cognitive_risk,
-        "explanation": explanation_summary,
-        "disclaimer": "This is an AI-generated cognitive biomarker screening summary for research/reference only. It is not a clinical diagnosis of dementia or other neurological conditions. Please consult a qualified neuropsychologist or doctor for professional assessments."
-    }
-
-    # ==========================================
     # LEGACY WRAPPER STRUCTURE FOR COMPATIBILITY
     # ==========================================
     legacy_speech_metrics = {
@@ -622,30 +532,6 @@ def analyze_clinical_speech(transcript: str, segments: list) -> dict:
         "shortest_sentence": min(sentences, key=len) if sentences else ""
     }
 
-    # Emotion Lexicon mapping
-    emotion_lexicon = {
-        "anxious": ["घबराहट", "चिंता", "डर", "तनाव", "परेशान", "anxiety", "tension", "dar", "darr", "gabhrahat", "worry", "worried", "scared", "anxious"],
-        "sad": ["उदास", "दुखी", "रोना", "अकेलापन", "sad", "lonely", "dukh", "udaas", "depressed", "crying"],
-        "frustrated": ["गुस्सा", "चिड़चिड़ापन", "तंग", "frustrated", "annoyed", "gussa", "angry", "fed up"],
-        "confused": ["भ्रम", "असमंजस", "समझ नहीं आ रहा", "उलझन", "confused", "confusion", "samajh nahi", "clueless"]
-    }
-    emotion_scores = {"neutral": 1.0, "anxious": 0.0, "sad": 0.0, "frustrated": 0.0, "confused": 0.0}
-    matched_any = False
-    for emo, keywords in emotion_lexicon.items():
-        matches_count = 0
-        for kw in keywords:
-            matches_count += len(re.findall(rf"\b{kw}\b" if kw.isascii() else kw, text_lower))
-        if matches_count > 0:
-            emotion_scores[emo] = matches_count * 0.4
-            matched_any = True
-    if matched_any:
-        emotion_scores["neutral"] = max(0.1, 1.0 - sum(v for k, v in emotion_scores.items() if k != "neutral"))
-        total = sum(emotion_scores.values())
-        for k in emotion_scores:
-            emotion_scores[k] = round(emotion_scores[k] / total, 2)
-    dominant_emo = max(emotion_scores, key=emotion_scores.get)
-    emotion_indicators = {**emotion_scores, "dominant_emotion": dominant_emo.capitalize()}
-
     # Compile unified biomarker response payload
     return {
         "pause_metrics": pause_metrics,
@@ -655,8 +541,6 @@ def analyze_clinical_speech(transcript: str, segments: list) -> dict:
         "lexical_features": lexical_features,
         "memory_indicators": memory_indicators,
         "executive_function": executive_function,
-        "clinical_summary": clinical_summary,
-        "emotion_indicators": emotion_indicators,
         # Backward compatible layers
         "speech_metrics": legacy_speech_metrics,
         "repetition_analysis": {

@@ -40,10 +40,8 @@ class TestClinicalSpeechAnalytics(unittest.TestCase):
         self.assertIn("lexical_diversity", result)
         self.assertIn("sentence_complexity", result)
         self.assertIn("memory_indicators", result)
-        self.assertIn("clinical_summary", result)
         
         # Normal content expectations
-        self.assertEqual(result["clinical_summary"]["overall_cognitive_risk"], "Low")
         self.assertEqual(result["memory_indicators"]["memory_indicator_count"], 0)
         self.assertEqual(result["fillers"]["total_count"], 0)
 
@@ -148,7 +146,6 @@ class TestClinicalSpeechAnalytics(unittest.TestCase):
         self.assertEqual(result["memory_indicators"]["memory_indicator_count"], 2)
         self.assertIn("yaad nahi", result["memory_indicators"]["detected_phrases"])
         self.assertIn("bhool gaya", result["memory_indicators"]["detected_phrases"])
-        self.assertGreater(result["memory_indicators"]["risk_score"], 5.0)
 
     def test_transcript_with_contradictory_timeline_references(self):
         # Conflicting days: Monday vs Wednesday. Conflicting years: 2020 vs 2024
@@ -216,4 +213,3 @@ class TestClinicalSpeechAnalytics(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

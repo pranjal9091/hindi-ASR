@@ -362,16 +362,12 @@ async def transcribe(file: UploadFile = File(...)):
         with open(corrected_json_path, "r", encoding="utf-8") as f:
             corrected_data = json.load(f)
             
-        # Processing NLP & clinical details
-        from src.clinical_nlp import process_clinical_nlp
-        from src.clinical_reasoner import reason_clinical_nlp
+        # Compute transcript-based cognitive speech biomarkers
         from src.clinical_speech_analytics import analyze_clinical_speech
         
         transcript_text = corrected_data.get("full_transcript", "")
-        clinical_base = process_clinical_nlp(transcript_text)
-        clinical_data = reason_clinical_nlp(transcript_text, clinical_base)
+        clinical_data = {}
         
-        # Compute transcript-based cognitive speech biomarkers
         speech_analytics = analyze_clinical_speech(transcript_text, corrected_data.get("segments", []))
         clinical_data["speech_analytics"] = speech_analytics
 
@@ -420,38 +416,6 @@ async def transcribe(file: UploadFile = File(...)):
             f"Feature extraction time: {extraction_duration_ms:.2f} ms, "
             f"Model inference time: {predict_duration_ms:.2f} ms"
         )
-
-        # Populate legacy SOAP fields with dementia-specific biomarkers
-        clinical_data["soap_note"] = {
-            "subjective": f"Subjective Cognitive Metrics: Memory indicators count: {speech_analytics['memory_indicators']['memory_loss_phrases_count']} ({', '.join(speech_analytics['memory_indicators']['memory_loss_phrases_examples']) if speech_analytics['memory_indicators']['memory_loss_phrases_examples'] else 'None'}). Uncertainty phrases count: {speech_analytics['memory_indicators']['uncertainty_phrases_count']}. Self-corrections count: {speech_analytics['memory_indicators']['self_corrections_count']}.",
-            "objective": f"Objective Biomarkers: Speech Rate (WPM): {speech_analytics['speech_fluency']['words_per_minute']}. Articulation Rate (WPM): {speech_analytics['speech_fluency']['articulation_rate']}. Pause Ratio: {speech_analytics['pause_metrics']['pause_ratio']}. Hesitations (>0.3s): {speech_analytics['pause_metrics']['hesitation_pauses_count']}. Significant pauses (>1s): {speech_analytics['pause_metrics']['significant_pauses_count']}. Fillers per minute: {speech_analytics['fillers']['fillers_per_minute']}. Perseveration score: {speech_analytics['repetitions']['perseveration_score']}.",
-            "assessment": f"Biomarker Assessment: Overall Risk Level: {speech_analytics['clinical_summary']['overall_cognitive_risk']} Risk. Memory Risk: {speech_analytics['clinical_summary']['memory_risk']}. Language Risk: {speech_analytics['clinical_summary']['language_risk']}. Speech Risk: {speech_analytics['clinical_summary']['speech_risk']}. Type-Token Ratio: {speech_analytics['lexical_features']['type_token_ratio']}. MATTR: {speech_analytics['lexical_features']['moving_average_ttr']}.",
-            "plan": "Biomarker Platform recommendation: Conduct standardized verbal cognitive fluency assessments periodically. Monitor pause structures and filler/repetition scores to track cognitive trends. No diagnosis is estimated."
-        }
-        clinical_data["summary"] = {
-            "chief_complaint": "Cognitive biomarker profiling screening assessment.",
-            "symptoms": f"Hesitations: {speech_analytics['memory_indicators']['recall_difficulty_indicators_count']}, Self-corrections: {speech_analytics['memory_indicators']['self_corrections_count']}, Fillers: {sum(speech_analytics['fillers']['filler_frequency'].values())}",
-            "diagnosis": "Cognitive biomarker profiling (Screening only)",
-            "advice": "This is a transcript-based screening of cognitive biomarkers. Consult a medical specialist for clinical validation."
-        }
-        clinical_data["possible_diagnosis"] = []
-        clinical_data["medicines"] = []
-        clinical_data["vitals"] = {
-            "blood_pressure": "N/A",
-            "temperature": "N/A",
-            "pulse": "N/A",
-            "oxygen": "N/A",
-            "weight": "N/A"
-        }
-        clinical_data["timeline"] = [
-            {"time": "Biomarker Warning", "event": warning} for warning in speech_analytics["executive_function"]["timeline_inconsistencies"]
-        ]
-        clinical_data["follow_up_questions"] = [
-            "Can you recall the three objects mentioned in the recall exercise?",
-            "What year and month is it currently?",
-            "Can you name the day of the week today?",
-            "Please describe a simple task like brushing your teeth or preparing tea."
-        ]
 
         response_data = {
             "success": True,
