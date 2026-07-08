@@ -378,6 +378,8 @@ export default function TranscriptCard({
             {isRecording && (
               <span className="dictation-cursor" aria-hidden="true">|</span>
             )}
+          </div>
+        </div>
       )}
       
       {activeWorkspaceTab === "clinical" && (
