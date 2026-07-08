@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Copy, Download, RotateCcw, Check, Sparkles, Search, Sliders, Activity, AlertTriangle } from "lucide-react";
+import { Copy, Download, RotateCcw, Check, Sparkles, Search, Sliders, Activity, AlertTriangle, Brain, Clock, Smile, Gauge, MessageSquare, BarChart2 } from "lucide-react";
 import { exportToTXT, exportToPDF, exportToDOCX } from "../services/export";
 
 export default function TranscriptCard({ 
@@ -192,7 +192,7 @@ export default function TranscriptCard({
       <div className="document-header">
         <div className="document-header-left">
           {/* Workspace Switcher Tabs */}
-          <div className="workspace-tabs-row" style={{ borderBottom: "none", marginBottom: 0 }}>
+          <div className="workspace-tabs-row">
             <button
               type="button"
               className={`workspace-tab-btn ${activeWorkspaceTab === "transcript" ? "active" : ""}`}
@@ -208,6 +208,15 @@ export default function TranscriptCard({
               title={!clinicalData ? "No clinical reports extracted yet" : "View Clinical Analysis"}
             >
               Clinical Insights
+            </button>
+            <button
+              type="button"
+              className={`workspace-tab-btn ${activeWorkspaceTab === "speech_analytics" ? "active" : ""}`}
+              onClick={() => setActiveWorkspaceTab("speech_analytics")}
+              disabled={!clinicalData || !clinicalData.speech_analytics}
+              title={!clinicalData?.speech_analytics ? "No speech analytics processed yet" : "View Speech & Cognitive Analytics"}
+            >
+              Speech Analytics
             </button>
           </div>
           
@@ -369,9 +378,9 @@ export default function TranscriptCard({
             {isRecording && (
               <span className="dictation-cursor" aria-hidden="true">|</span>
             )}
-          </div>
-        </div>
-      ) : (
+      )}
+      
+      {activeWorkspaceTab === "clinical" && (
         <div className="document-content" tabIndex="0" aria-label="Clinical reports display">
           <div className="clinical-insights-panel fade-in">
             
@@ -621,6 +630,362 @@ export default function TranscriptCard({
           </div>
         </div>
       )}
+
+      {activeWorkspaceTab === "speech_analytics" && (
+        <div className="document-content" tabIndex="0" aria-label="Clinical speech analytics display">
+          <div className="speech-analytics-panel fade-in">
+            {/* Disclaimer Banner */}
+            <div className="disclaimer-box">
+              <div className="disclaimer-title-row">
+                <AlertTriangle style={{ width: "1.1rem", height: "1.1rem", color: "#166534" }} />
+                Clinical Speech Analytics Disclaimer
+              </div>
+              <p className="disclaimer-body-text">
+                {clinicalData?.speech_analytics?.clinical_summary?.disclaimer}
+              </p>
+            </div>
+
+            {/* Cognitive Biomarkers Summary Card */}
+            <div className="analytics-grid">
+              <div className="analytics-card" style={{ gridColumn: "1 / -1" }}>
+                <h4 className="analytics-card-title">
+                  <Brain className="analytics-card-icon" />
+                  Cognitive Biomarker Risk Profiles
+                </h4>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginTop: "8px" }}>
+                  <div className="metrics-flex-row" style={{ borderBottom: "none", background: "#f9fafb", padding: "12px", borderRadius: "8px", flexDirection: "column", alignItems: "flex-start", gap: "6px" }}>
+                    <span className="metrics-label" style={{ fontWeight: 600 }}>Overall Cognitive Risk</span>
+                    <span className={`risk-level-badge ${clinicalData?.speech_analytics?.clinical_summary?.overall_cognitive_risk?.toLowerCase()}`}>
+                      {clinicalData?.speech_analytics?.clinical_summary?.overall_cognitive_risk} Risk
+                    </span>
+                  </div>
+                  <div className="metrics-flex-row" style={{ borderBottom: "none", background: "#f9fafb", padding: "12px", borderRadius: "8px", flexDirection: "column", alignItems: "flex-start", gap: "6px" }}>
+                    <span className="metrics-label" style={{ fontWeight: 600 }}>Memory Assessment Risk</span>
+                    <span className={`risk-level-badge ${clinicalData?.speech_analytics?.clinical_summary?.memory_risk?.toLowerCase()}`}>
+                      {clinicalData?.speech_analytics?.clinical_summary?.memory_risk}
+                    </span>
+                  </div>
+                  <div className="metrics-flex-row" style={{ borderBottom: "none", background: "#f9fafb", padding: "12px", borderRadius: "8px", flexDirection: "column", alignItems: "flex-start", gap: "6px" }}>
+                    <span className="metrics-label" style={{ fontWeight: 600 }}>Language Flow Risk</span>
+                    <span className={`risk-level-badge ${clinicalData?.speech_analytics?.clinical_summary?.language_risk?.toLowerCase()}`}>
+                      {clinicalData?.speech_analytics?.clinical_summary?.language_risk}
+                    </span>
+                  </div>
+                  <div className="metrics-flex-row" style={{ borderBottom: "none", background: "#f9fafb", padding: "12px", borderRadius: "8px", flexDirection: "column", alignItems: "flex-start", gap: "6px" }}>
+                    <span className="metrics-label" style={{ fontWeight: 600 }}>Speech Rhythm Risk</span>
+                    <span className={`risk-level-badge ${clinicalData?.speech_analytics?.clinical_summary?.speech_risk?.toLowerCase()}`}>
+                      {clinicalData?.speech_analytics?.clinical_summary?.speech_risk}
+                    </span>
+                  </div>
+                </div>
+                <div style={{ marginTop: "12px", fontSize: "0.85rem", color: "var(--text-secondary)", lineHeight: "1.5", background: "#eff6ff", padding: "12px", borderRadius: "8px", borderLeft: "4px solid var(--accent)" }}>
+                  <strong>Biomarker Contribution Analysis:</strong> {clinicalData?.speech_analytics?.clinical_summary?.explanation}
+                </div>
+              </div>
+
+              {/* Speech Metrics Card */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <Gauge className="analytics-card-icon" />
+                  Speech Rate Metrics
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Total Words</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.speech_metrics?.total_words}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Total Sentences</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.speech_metrics?.total_sentences}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Speech Duration</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.speech_metrics?.speech_duration} s</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Words Per Minute (WPM)</span>
+                  <span className="metrics-val" style={{ color: "#1d4ed8" }}>{clinicalData?.speech_analytics?.speech_metrics?.words_per_minute}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Characters Per Second</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.speech_metrics?.chars_per_second}</span>
+                </div>
+                <div className="metrics-flex-row" style={{ flexDirection: "column", alignItems: "flex-start", gap: "4px" }}>
+                  <span className="metrics-label" style={{ fontWeight: 600 }}>Longest Sentence:</span>
+                  <span style={{ fontSize: "0.775rem", color: "var(--text-secondary)", fontStyle: "italic" }}>
+                    "{clinicalData?.speech_analytics?.speech_metrics?.longest_sentence || "None"}"
+                  </span>
+                </div>
+              </div>
+
+              {/* Pause Metrics Card */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <Clock className="analytics-card-icon" />
+                  Pause & Silence Rhythm
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Total Pauses</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.pause_metrics?.total_pause_count}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Average Pause Duration</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.pause_metrics?.average_pause_duration} s</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Max Pause Duration</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.pause_metrics?.max_pause} s</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Long Pauses (&gt; 2 seconds)</span>
+                  <span className="metrics-val" style={{ color: "#b91c1c" }}>{clinicalData?.speech_analytics?.pause_metrics?.long_pause_count}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Silence to Speech Ratio</span>
+                  <span className="metrics-val">{(clinicalData?.speech_analytics?.pause_metrics?.pause_ratio * 100).toFixed(1)}%</span>
+                </div>
+                <div className="emotion-bar-row" style={{ marginTop: "8px" }}>
+                  <div className="emotion-label-row">
+                    <span>Silence Ratio</span>
+                    <span>{(clinicalData?.speech_analytics?.pause_metrics?.pause_ratio * 100).toFixed(1)}%</span>
+                  </div>
+                  <div className="emotion-bar-track">
+                    <div className="emotion-bar-fill" style={{ width: `${Math.min(100, clinicalData?.speech_analytics?.pause_metrics?.pause_ratio * 100)}%`, backgroundColor: "#1e3a8a" }}></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Speech Fillers & Corrections */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <MessageSquare className="analytics-card-icon" />
+                  Fillers & Self-Corrections
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Total Filler Count</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.fillers?.total_count}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Fillers Per Minute</span>
+                  <span className="metrics-val" style={{ color: "#b45309" }}>{clinicalData?.speech_analytics?.fillers?.fillers_per_minute}</span>
+                </div>
+                
+                <span className="metrics-label" style={{ fontWeight: 600, marginTop: "4px" }}>Filler Word Frequency:</span>
+                <div className="filler-tags-row">
+                  {Object.keys(clinicalData?.speech_analytics?.fillers?.frequency || {}).length > 0 ? (
+                    Object.entries(clinicalData.speech_analytics.fillers.frequency).map(([f, count], idx) => (
+                      <span key={idx} className="filler-tag-pill">
+                        {f} <span className="filler-tag-count">{count}</span>
+                      </span>
+                    ))
+                  ) : (
+                    <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>No fillers detected.</span>
+                  )}
+                </div>
+
+                <div className="metrics-flex-row" style={{ borderBottom: "none", marginTop: "8px" }}>
+                  <span className="metrics-label">Self-Corrections Count</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.self_corrections?.correction_count}</span>
+                </div>
+                {clinicalData?.speech_analytics?.self_corrections?.correction_count > 0 && (
+                  <div className="repetition-pill-examples">
+                    {clinicalData.speech_analytics.self_corrections.examples.map((ex, idx) => (
+                      <span key={idx} className="repetition-example-pill">{ex}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Repetition Analysis Card */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <RotateCcw className="analytics-card-icon" />
+                  Repetition & Echo Phenomena
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Consecutive Word Repeats</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.repetition_analysis?.repeated_words_count}</span>
+                </div>
+                {clinicalData?.speech_analytics?.repetition_analysis?.repeated_words_count > 0 && (
+                  <div className="repetition-pill-examples" style={{ marginBottom: "8px" }}>
+                    {clinicalData.speech_analytics.repetition_analysis.repeated_words_examples.map((ex, idx) => (
+                      <span key={idx} className="repetition-example-pill">"{ex}"</span>
+                    ))}
+                  </div>
+                )}
+
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Phrase Repetitions (2-4 words)</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.repetition_analysis?.repeated_phrases_count}</span>
+                </div>
+                {clinicalData?.speech_analytics?.repetition_analysis?.repeated_phrases_count > 0 && (
+                  <div className="repetition-pill-examples" style={{ marginBottom: "8px" }}>
+                    {clinicalData.speech_analytics.repetition_analysis.repeated_phrases_examples.map((ex, idx) => (
+                      <span key={idx} className="repetition-example-pill">"{ex}"</span>
+                    ))}
+                  </div>
+                )}
+
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Sentence Repetitions</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.repetition_analysis?.repeated_sentences_count}</span>
+                </div>
+                {clinicalData?.speech_analytics?.repetition_analysis?.repeated_sentences_count > 0 && (
+                  <div className="repetition-pill-examples">
+                    {clinicalData.speech_analytics.repetition_analysis.repeated_sentences_examples.map((ex, idx) => (
+                      <span key={idx} className="repetition-example-pill">"{ex}"</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Lexical Diversity Card */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <BarChart2 className="analytics-card-icon" />
+                  Lexical Diversity & Structure
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Unique Words (Vocabulary)</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.lexical_diversity?.unique_words_count}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Type-Token Ratio (TTR)</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.lexical_diversity?.type_token_ratio}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Lexical Richness Level</span>
+                  <span className="metrics-val" style={{ color: "#0d9488" }}>{clinicalData?.speech_analytics?.lexical_diversity?.lexical_richness}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Avg Words per Sentence</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.sentence_complexity?.avg_words_per_sentence}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Sentence Length Variance</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.sentence_complexity?.sentence_length_variance}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Incomplete/Hesitant Sentences</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.sentence_complexity?.incomplete_sentences_count}</span>
+                </div>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Sentence Fragments (&lt; 3 words)</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.sentence_complexity?.fragment_count}</span>
+                </div>
+              </div>
+
+              {/* Memory Indicators & Timeline Warnings */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <AlertTriangle className="analytics-card-icon" />
+                  Cognitive & Timeline Warnings
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Memory Loss Phrases Count</span>
+                  <span className="metrics-val" style={{ color: "#dc2626" }}>{clinicalData?.speech_analytics?.memory_indicators?.memory_indicator_count}</span>
+                </div>
+                {clinicalData?.speech_analytics?.memory_indicators?.memory_indicator_count > 0 && (
+                  <div className="repetition-pill-examples" style={{ marginBottom: "8px" }}>
+                    {clinicalData.speech_analytics.memory_indicators.detected_phrases.map((ex, idx) => (
+                      <span key={idx} className="repetition-example-pill" style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#991b1b" }}>"{ex}"</span>
+                    ))}
+                  </div>
+                )}
+
+                <span className="metrics-label" style={{ fontWeight: 600, marginTop: "4px" }}>Timeline Conflicts & Inconsistencies:</span>
+                {clinicalData?.speech_analytics?.timeline_consistency?.warnings?.length > 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
+                    {clinicalData.speech_analytics.timeline_consistency.warnings.map((w, idx) => (
+                      <div key={idx} className="timeline-warning-box">
+                        <AlertTriangle style={{ width: "1rem", height: "1rem", color: "#b45309", flexShrink: 0 }} />
+                        <span className="timeline-warning-text">{w}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>No timeline inconsistencies found.</span>
+                )}
+
+                <div className="metrics-flex-row" style={{ borderBottom: "none", marginTop: "8px" }}>
+                  <span className="metrics-label">Hesitation Gaps (&gt; 1.0 s)</span>
+                  <span className="metrics-val">{clinicalData?.speech_analytics?.word_retrieval_difficulty?.hesitation_count}</span>
+                </div>
+                {clinicalData?.speech_analytics?.word_retrieval_difficulty?.hesitation_count > 0 && (
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", background: "#f9fafb", padding: "8px", borderRadius: "6px", width: "100%" }}>
+                    <strong>Hesitations:</strong> {clinicalData.speech_analytics.word_retrieval_difficulty.locations.map(h => `"${h.word}" at ${h.start}s`).join(", ")}
+                  </div>
+                )}
+              </div>
+
+              {/* Emotion Classifier (Lightweight NLP) */}
+              <div className="analytics-card">
+                <h4 className="analytics-card-title">
+                  <Smile className="analytics-card-icon" />
+                  Acoustic & Lexical Emotion Indicators
+                </h4>
+                <div className="metrics-flex-row">
+                  <span className="metrics-label">Dominant Lexical Emotion</span>
+                  <span className="metrics-val" style={{ color: "#4f46e5" }}>{clinicalData?.speech_analytics?.emotion_indicators?.dominant_emotion}</span>
+                </div>
+
+                <span className="metrics-label" style={{ fontWeight: 600, marginTop: "4px" }}>Emotion Profile Breakdown:</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <div className="emotion-bar-row">
+                    <div className="emotion-label-row">
+                      <span>Neutral</span>
+                      <span>{Math.round((clinicalData?.speech_analytics?.emotion_indicators?.neutral || 0) * 100)}%</span>
+                    </div>
+                    <div className="emotion-bar-track">
+                      <div className="emotion-bar-fill" style={{ width: `${Math.round((clinicalData?.speech_analytics?.emotion_indicators?.neutral || 0) * 100)}%`, backgroundColor: "#6b7280" }}></div>
+                    </div>
+                  </div>
+
+                  <div className="emotion-bar-row">
+                    <div className="emotion-label-row">
+                      <span>Anxious / Worried</span>
+                      <span>{Math.round((clinicalData?.speech_analytics?.emotion_indicators?.anxious || 0) * 100)}%</span>
+                    </div>
+                    <div className="emotion-bar-track">
+                      <div className="emotion-bar-fill" style={{ width: `${Math.round((clinicalData?.speech_analytics?.emotion_indicators?.anxious || 0) * 100)}%`, backgroundColor: "#eab308" }}></div>
+                    </div>
+                  </div>
+
+                  <div className="emotion-bar-row">
+                    <div className="emotion-label-row">
+                      <span>Sad / Depressed</span>
+                      <span>{Math.round((clinicalData?.speech_analytics?.emotion_indicators?.sad || 0) * 100)}%</span>
+                    </div>
+                    <div className="emotion-bar-track">
+                      <div className="emotion-bar-fill" style={{ width: `${Math.round((clinicalData?.speech_analytics?.emotion_indicators?.sad || 0) * 100)}%`, backgroundColor: "#3b82f6" }}></div>
+                    </div>
+                  </div>
+
+                  <div className="emotion-bar-row">
+                    <div className="emotion-label-row">
+                      <span>Frustrated / Angry</span>
+                      <span>{Math.round((clinicalData?.speech_analytics?.emotion_indicators?.frustrated || 0) * 100)}%</span>
+                    </div>
+                    <div className="emotion-bar-track">
+                      <div className="emotion-bar-fill" style={{ width: `${Math.round((clinicalData?.speech_analytics?.emotion_indicators?.frustrated || 0) * 100)}%`, backgroundColor: "#ef4444" }}></div>
+                    </div>
+                  </div>
+
+                  <div className="emotion-bar-row">
+                    <div className="emotion-label-row">
+                      <span>Confused / Clueless</span>
+                      <span>{Math.round((clinicalData?.speech_analytics?.emotion_indicators?.confused || 0) * 100)}%</span>
+                    </div>
+                    <div className="emotion-bar-track">
+                      <div className="emotion-bar-fill" style={{ width: `${Math.round((clinicalData?.speech_analytics?.emotion_indicators?.confused || 0) * 100)}%`, backgroundColor: "#a855f7" }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

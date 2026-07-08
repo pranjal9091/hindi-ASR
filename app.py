@@ -365,9 +365,15 @@ async def transcribe(file: UploadFile = File(...)):
         # Processing NLP & clinical details
         from src.clinical_nlp import process_clinical_nlp
         from src.clinical_reasoner import reason_clinical_nlp
+        from src.clinical_speech_analytics import analyze_clinical_speech
+        
         transcript_text = corrected_data.get("full_transcript", "")
         clinical_base = process_clinical_nlp(transcript_text)
         clinical_data = reason_clinical_nlp(transcript_text, clinical_base)
+        
+        # Compute transcript-based cognitive speech biomarkers
+        speech_analytics = analyze_clinical_speech(transcript_text, corrected_data.get("segments", []))
+        clinical_data["speech_analytics"] = speech_analytics
 
         response_data = {
             "success": True,

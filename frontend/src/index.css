@@ -1658,3 +1658,227 @@ div[tabindex="0"]:focus:not(:focus-visible) {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* Clinical Speech Analytics Styles */
+.speech-analytics-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  text-align: left;
+  padding: var(--space-2) var(--space-1);
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-4);
+}
+
+.analytics-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition: var(--transition);
+}
+
+.analytics-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-light);
+}
+
+.analytics-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.analytics-card-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--accent);
+}
+
+.risk-level-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.risk-level-badge.low {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.risk-level-badge.medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.risk-level-badge.high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.metrics-flex-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.metrics-flex-row:last-child {
+  border-bottom: none;
+}
+
+.metrics-val {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.metrics-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.filler-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filler-tag-pill {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.775rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filler-tag-count {
+  background: #1d4ed8;
+  color: white;
+  font-size: 0.675rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.repetition-item-box {
+  background: #f9fafb;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.repetition-title-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.repetition-pill-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.repetition-example-pill {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+
+.disclaimer-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: var(--space-4);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.disclaimer-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #166534;
+  font-size: 0.875rem;
+}
+
+.disclaimer-body-text {
+  font-size: 0.775rem;
+  color: #1b5e20;
+  line-height: 1.45;
+}
+
+.emotion-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.emotion-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.emotion-bar-track {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.emotion-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.timeline-warning-box {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 8px;
+  padding: var(--space-3);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.timeline-warning-text {
+  font-size: 0.775rem;
+  color: #92400e;
+  font-weight: 500;
+  line-height: 1.4;
+}
