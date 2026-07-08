@@ -13,6 +13,5 @@ def predict_dementia(feature_vector: dict) -> dict:
         "fluency": None,
         "attention": None,
         "orientation": None,
-        "memory": None,
-        "overall": None
+        "memory": None
     }

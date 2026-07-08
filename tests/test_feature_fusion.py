@@ -169,8 +169,8 @@ class TestFeatureFusion(unittest.TestCase):
         
         self.assertIn("language", prediction)
         self.assertIn("fluency", prediction)
-        self.assertIn("overall", prediction)
-        self.assertIsNone(prediction["overall"])
+        self.assertIn("attention", prediction)
+        self.assertIsNone(prediction["attention"])
         self.assertIsNone(prediction["memory"])
 
 if __name__ == "__main__":

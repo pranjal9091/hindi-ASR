@@ -416,242 +416,59 @@ export default function TranscriptCard({
             </div>
 
             <div className="analytics-grid">
-
-              {/* Speech Metrics Card */}
-              <div className="analytics-card">
+              <div className="analytics-card wide">
                 <h4 className="analytics-card-title">
                   <Gauge className="analytics-card-icon" />
-                  Speech Rate Metrics
+                  Speech & Language Biomarkers
                 </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Total Words</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.speech_metrics?.total_words}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Total Sentences</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.speech_metrics?.total_sentences}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Speech Duration</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.speech_metrics?.speech_duration} s</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Words Per Minute (WPM)</span>
-                  <span className="metrics-val" style={{ color: "#1d4ed8" }}>{clinicalData?.speech_analytics?.speech_metrics?.words_per_minute}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Characters Per Second</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.speech_metrics?.chars_per_second}</span>
-                </div>
-                <div className="metrics-flex-row" style={{ flexDirection: "column", alignItems: "flex-start", gap: "4px" }}>
-                  <span className="metrics-label" style={{ fontWeight: 600 }}>Longest Sentence:</span>
-                  <span style={{ fontSize: "0.775rem", color: "var(--text-secondary)", fontStyle: "italic" }}>
-                    "{clinicalData?.speech_analytics?.speech_metrics?.longest_sentence || "None"}"
-                  </span>
-                </div>
-              </div>
-
-              {/* Pause Metrics Card */}
-              <div className="analytics-card">
-                <h4 className="analytics-card-title">
-                  <Clock className="analytics-card-icon" />
-                  Pause & Silence Rhythm
-                </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Total Pauses</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.pause_metrics?.total_pause_count}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Average Pause Duration</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.pause_metrics?.average_pause_duration} s</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Max Pause Duration</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.pause_metrics?.max_pause} s</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Long Pauses (&gt; 2 seconds)</span>
-                  <span className="metrics-val" style={{ color: "#b91c1c" }}>{clinicalData?.speech_analytics?.pause_metrics?.long_pause_count}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Silence to Speech Ratio</span>
-                  <span className="metrics-val">{(clinicalData?.speech_analytics?.pause_metrics?.pause_ratio * 100).toFixed(1)}%</span>
-                </div>
-                <div className="emotion-bar-row" style={{ marginTop: "8px" }}>
-                  <div className="emotion-label-row">
-                    <span>Silence Ratio</span>
-                    <span>{(clinicalData?.speech_analytics?.pause_metrics?.pause_ratio * 100).toFixed(1)}%</span>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px", marginTop: "12px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Words Per Minute (WPM)</span>
+                      <span className="metrics-val" style={{ fontWeight: 600, color: "#1e40af" }}>{clinicalData?.speech_analytics?.speech_fluency?.words_per_minute || 0}</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Articulation Rate</span>
+                      <span className="metrics-val">{clinicalData?.speech_analytics?.speech_fluency?.articulation_rate || 0} words/min</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Total Pauses</span>
+                      <span className="metrics-val">{clinicalData?.speech_analytics?.pause_metrics?.total_pause_count || 0}</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Long Pauses (&gt; 1 sec)</span>
+                      <span className="metrics-val" style={{ color: "#b91c1c", fontWeight: 600 }}>{clinicalData?.speech_analytics?.pause_metrics?.significant_pauses_count || 0}</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Pause Ratio</span>
+                      <span className="metrics-val">{((clinicalData?.speech_analytics?.pause_metrics?.pause_ratio || 0) * 100).toFixed(1)}%</span>
+                    </div>
                   </div>
-                  <div className="emotion-bar-track">
-                    <div className="emotion-bar-fill" style={{ width: `${Math.min(100, clinicalData?.speech_analytics?.pause_metrics?.pause_ratio * 100)}%`, backgroundColor: "#1e3a8a" }}></div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Hesitation Count</span>
+                      <span className="metrics-val">{clinicalData?.speech_analytics?.word_retrieval_difficulty?.hesitation_count || 0}</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Fillers Count</span>
+                      <span className="metrics-val">{clinicalData?.speech_analytics?.fillers?.total_count || 0}</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Self Corrections</span>
+                      <span className="metrics-val">{clinicalData?.speech_analytics?.self_corrections?.correction_count || 0}</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Repetition Count</span>
+                      <span className="metrics-val">{clinicalData?.speech_analytics?.repetition_analysis?.total_repetition_count || 0}</span>
+                    </div>
+                    <div className="metrics-flex-row">
+                      <span className="metrics-label">Word Retrieval Difficulty Count</span>
+                      <span className="metrics-val" style={{ color: "#b45309", fontWeight: 600 }}>{clinicalData?.speech_analytics?.memory_indicators?.recall_difficulty_indicators_count || 0}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              {/* Speech Fillers & Corrections */}
-              <div className="analytics-card">
-                <h4 className="analytics-card-title">
-                  <MessageSquare className="analytics-card-icon" />
-                  Fillers & Self-Corrections
-                </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Total Filler Count</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.fillers?.total_count}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Fillers Per Minute</span>
-                  <span className="metrics-val" style={{ color: "#b45309" }}>{clinicalData?.speech_analytics?.fillers?.fillers_per_minute}</span>
-                </div>
-                
-                <span className="metrics-label" style={{ fontWeight: 600, marginTop: "4px" }}>Filler Word Frequency:</span>
-                <div className="filler-tags-row">
-                  {Object.keys(clinicalData?.speech_analytics?.fillers?.frequency || {}).length > 0 ? (
-                    Object.entries(clinicalData.speech_analytics.fillers.frequency).map(([f, count], idx) => (
-                      <span key={idx} className="filler-tag-pill">
-                        {f} <span className="filler-tag-count">{count}</span>
-                      </span>
-                    ))
-                  ) : (
-                    <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>No fillers detected.</span>
-                  )}
-                </div>
-
-                <div className="metrics-flex-row" style={{ borderBottom: "none", marginTop: "8px" }}>
-                  <span className="metrics-label">Self-Corrections Count</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.self_corrections?.correction_count}</span>
-                </div>
-                {clinicalData?.speech_analytics?.self_corrections?.correction_count > 0 && (
-                  <div className="repetition-pill-examples">
-                    {clinicalData.speech_analytics.self_corrections.examples.map((ex, idx) => (
-                      <span key={idx} className="repetition-example-pill">{ex}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Repetition Analysis Card */}
-              <div className="analytics-card">
-                <h4 className="analytics-card-title">
-                  <RotateCcw className="analytics-card-icon" />
-                  Repetition & Echo Phenomena
-                </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Consecutive Word Repeats</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.repetition_analysis?.repeated_words_count}</span>
-                </div>
-                {clinicalData?.speech_analytics?.repetition_analysis?.repeated_words_count > 0 && (
-                  <div className="repetition-pill-examples" style={{ marginBottom: "8px" }}>
-                    {clinicalData.speech_analytics.repetition_analysis.repeated_words_examples.map((ex, idx) => (
-                      <span key={idx} className="repetition-example-pill">"{ex}"</span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Phrase Repetitions (2-4 words)</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.repetition_analysis?.repeated_phrases_count}</span>
-                </div>
-                {clinicalData?.speech_analytics?.repetition_analysis?.repeated_phrases_count > 0 && (
-                  <div className="repetition-pill-examples" style={{ marginBottom: "8px" }}>
-                    {clinicalData.speech_analytics.repetition_analysis.repeated_phrases_examples.map((ex, idx) => (
-                      <span key={idx} className="repetition-example-pill">"{ex}"</span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Sentence Repetitions</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.repetition_analysis?.repeated_sentences_count}</span>
-                </div>
-                {clinicalData?.speech_analytics?.repetition_analysis?.repeated_sentences_count > 0 && (
-                  <div className="repetition-pill-examples">
-                    {clinicalData.speech_analytics.repetition_analysis.repeated_sentences_examples.map((ex, idx) => (
-                      <span key={idx} className="repetition-example-pill">"{ex}"</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Lexical Diversity Card */}
-              <div className="analytics-card">
-                <h4 className="analytics-card-title">
-                  <BarChart2 className="analytics-card-icon" />
-                  Lexical Diversity & Structure
-                </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Unique Words (Vocabulary)</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.lexical_diversity?.unique_words_count}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Type-Token Ratio (TTR)</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.lexical_diversity?.type_token_ratio}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Lexical Richness Level</span>
-                  <span className="metrics-val" style={{ color: "#0d9488" }}>{clinicalData?.speech_analytics?.lexical_diversity?.lexical_richness}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Avg Words per Sentence</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.sentence_complexity?.avg_words_per_sentence}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Sentence Length Variance</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.sentence_complexity?.sentence_length_variance}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Incomplete/Hesitant Sentences</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.sentence_complexity?.incomplete_sentences_count}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Sentence Fragments (&lt; 3 words)</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.sentence_complexity?.fragment_count}</span>
-                </div>
-              </div>
-
-              {/* Memory Indicators & Timeline Warnings */}
-              <div className="analytics-card">
-                <h4 className="analytics-card-title">
-                  <AlertTriangle className="analytics-card-icon" />
-                  Cognitive & Timeline Warnings
-                </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Memory Loss Phrases Count</span>
-                  <span className="metrics-val" style={{ color: "#dc2626" }}>{clinicalData?.speech_analytics?.memory_indicators?.memory_indicator_count}</span>
-                </div>
-                {clinicalData?.speech_analytics?.memory_indicators?.memory_indicator_count > 0 && (
-                  <div className="repetition-pill-examples" style={{ marginBottom: "8px" }}>
-                    {clinicalData.speech_analytics.memory_indicators.detected_phrases.map((ex, idx) => (
-                      <span key={idx} className="repetition-example-pill" style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#991b1b" }}>"{ex}"</span>
-                    ))}
-                  </div>
-                )}
-
-                <span className="metrics-label" style={{ fontWeight: 600, marginTop: "4px" }}>Timeline Conflicts & Inconsistencies:</span>
-                {clinicalData?.speech_analytics?.timeline_consistency?.warnings?.length > 0 ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
-                    {clinicalData.speech_analytics.timeline_consistency.warnings.map((w, idx) => (
-                      <div key={idx} className="timeline-warning-box">
-                        <AlertTriangle style={{ width: "1rem", height: "1rem", color: "#b45309", flexShrink: 0 }} />
-                        <span className="timeline-warning-text">{w}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>No timeline inconsistencies found.</span>
-                )}
-
-                <div className="metrics-flex-row" style={{ borderBottom: "none", marginTop: "8px" }}>
-                  <span className="metrics-label">Hesitation Gaps (&gt; 1.0 s)</span>
-                  <span className="metrics-val">{clinicalData?.speech_analytics?.word_retrieval_difficulty?.hesitation_count}</span>
-                </div>
-                {clinicalData?.speech_analytics?.word_retrieval_difficulty?.hesitation_count > 0 && (
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", background: "#f9fafb", padding: "8px", borderRadius: "6px", width: "100%" }}>
-                    <strong>Hesitations:</strong> {clinicalData.speech_analytics.word_retrieval_difficulty.locations.map(h => `"${h.word}" at ${h.start}s`).join(", ")}
-                  </div>
-                )}
-              </div>
-
-
             </div>
           </div>
         </div>
@@ -680,191 +497,37 @@ export default function TranscriptCard({
             </div>
 
             <div className="analytics-grid">
-              {/* Pitch Card */}
-              <div className="analytics-card">
-                <h4 className="analytics-card-title">
-                  <Activity className="analytics-card-icon" />
-                  Fundamental Frequency (Pitch / F0)
-                </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Mean Pitch</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.mean_pitch} Hz</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Median Pitch</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.median_pitch} Hz</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Pitch Standard Deviation</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.std_pitch} Hz</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Min Pitch</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.min_pitch} Hz</span>
-                </div>
-                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
-                  <span className="metrics-label">Max Pitch</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.pitch?.max_pitch} Hz</span>
-                </div>
-              </div>
-
-              {/* Energy Card */}
-              <div className="analytics-card">
-                <h4 className="analytics-card-title">
-                  <Zap className="analytics-card-icon" />
-                  Voice Energy & Intensity
-                </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">RMS Energy Mean</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.energy?.rms_mean}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">RMS Energy Std</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.energy?.rms_std}</span>
-                </div>
-                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
-                  <span className="metrics-label">Peak Amplitude Energy</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.energy?.peak_energy}</span>
-                </div>
-              </div>
-
-              {/* Speech Duration & Silence Ratio Card */}
-              <div className="analytics-card">
-                <h4 className="analytics-card-title">
-                  <Clock className="analytics-card-icon" />
-                  Speaking Duration & Silence
-                </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Total Audio Duration</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.speech_duration?.total_audio_duration} s</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Estimated Speech Duration</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.speech_duration?.estimated_speech_duration} s</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Silence Duration</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.speech_duration?.silence_duration} s</span>
-                </div>
-                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
-                  <span className="metrics-label">Silence-to-Speech Ratio</span>
-                  <span className="metrics-val" style={{ color: "#b91c1c" }}>{(clinicalData?.acoustic_biomarkers?.speech_duration?.silence_ratio * 100).toFixed(1)}%</span>
-                </div>
-                <div className="emotion-bar-row" style={{ marginTop: "12px" }}>
-                  <div className="emotion-label-row">
-                    <span>Silence Proportion</span>
-                    <span>{(clinicalData?.acoustic_biomarkers?.speech_duration?.silence_ratio * 100).toFixed(1)}%</span>
-                  </div>
-                  <div className="emotion-bar-track">
-                    <div className="emotion-bar-fill" style={{ width: `${Math.min(100, (clinicalData?.acoustic_biomarkers?.speech_duration?.silence_ratio || 0) * 100)}%`, backgroundColor: "#b91c1c" }}></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Prosody Card */}
-              <div className="analytics-card">
+              <div className="analytics-card wide">
                 <h4 className="analytics-card-title">
                   <Volume2 className="analytics-card-icon" />
-                  Speech Prosody & Variation
+                  Acoustic Speech Biomarkers
                 </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Voiced Speech Ratio</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.prosody?.voiced_ratio}</span>
-                </div>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Pitch Variability (Std/Mean)</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.prosody?.pitch_variability}</span>
-                </div>
-                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
-                  <span className="metrics-label">Energy Variability (Std/Mean)</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.prosody?.energy_variability}</span>
-                </div>
-              </div>
-
-              {/* Stability Card */}
-              <div className="analytics-card">
-                <h4 className="analytics-card-title">
-                  <ShieldCheck className="analytics-card-icon" />
-                  Voice Stability & Articulation Consistency
-                </h4>
-                <div className="metrics-flex-row">
-                  <span className="metrics-label">Articulation Consistency</span>
-                  <span className="metrics-val" style={{ color: "#0d9488" }}>{clinicalData?.acoustic_biomarkers?.stability?.articulation_consistency}</span>
-                </div>
-                <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
-                  <span className="metrics-label">Pause Energy Variance</span>
-                  <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.stability?.pause_energy_variance}</span>
-                </div>
-              </div>
-
-              {/* Spectral Features Card */}
-              <div className="analytics-card" style={{ gridColumn: "span 2" }}>
-                <h4 className="analytics-card-title">
-                  <BarChart2 className="analytics-card-icon" />
-                  Spectral Features (Acoustic Envelope)
-                </h4>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                  <div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px", marginTop: "12px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     <div className="metrics-flex-row">
-                      <span className="metrics-label">Spectral Centroid (Mean)</span>
-                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_centroid?.mean} Hz</span>
+                      <span className="metrics-label">Mean Pitch</span>
+                      <span className="metrics-val" style={{ fontWeight: 600, color: "#1e40af" }}>{clinicalData?.acoustic_biomarkers?.pitch?.mean_pitch || 0} Hz</span>
                     </div>
                     <div className="metrics-flex-row">
-                      <span className="metrics-label">Spectral Centroid (Std)</span>
-                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_centroid?.std} Hz</span>
+                      <span className="metrics-label">Pitch Variability</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.prosody?.pitch_variability || 0}</span>
                     </div>
                     <div className="metrics-flex-row">
-                      <span className="metrics-label">Spectral Bandwidth (Mean)</span>
-                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_bandwidth?.mean} Hz</span>
-                    </div>
-                    <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
-                      <span className="metrics-label">Spectral Bandwidth (Std)</span>
-                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_bandwidth?.std} Hz</span>
+                      <span className="metrics-label">RMS Energy</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.energy?.rms_mean || 0}</span>
                     </div>
                   </div>
-                  <div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     <div className="metrics-flex-row">
-                      <span className="metrics-label">Spectral Rolloff (Mean)</span>
-                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_rolloff?.mean} Hz</span>
+                      <span className="metrics-label">Silence Ratio</span>
+                      <span className="metrics-val" style={{ color: "#b91c1c", fontWeight: 600 }}>{((clinicalData?.acoustic_biomarkers?.speech_duration?.silence_ratio || 0) * 100).toFixed(1)}%</span>
                     </div>
                     <div className="metrics-flex-row">
-                      <span className="metrics-label">Spectral Rolloff (Std)</span>
-                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.spectral_rolloff?.std} Hz</span>
-                    </div>
-                    <div className="metrics-flex-row">
-                      <span className="metrics-label">Zero Crossing Rate (Mean)</span>
-                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.zero_crossing_rate?.mean}</span>
-                    </div>
-                    <div className="metrics-flex-row" style={{ borderBottom: "none" }}>
-                      <span className="metrics-label">Zero Crossing Rate (Std)</span>
-                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.spectral?.zero_crossing_rate?.std}</span>
+                      <span className="metrics-label">Voiced Ratio</span>
+                      <span className="metrics-val">{clinicalData?.acoustic_biomarkers?.prosody?.voiced_ratio || 0}</span>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              {/* MFCC Coefficient Statistics Card */}
-              <div className="analytics-card" style={{ gridColumn: "span 2" }}>
-                <h4 className="analytics-card-title">
-                  <Sliders className="analytics-card-icon" />
-                  Mel-Frequency Cepstral Coefficients (MFCC 1–13 Statistics)
-                </h4>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", fontSize: "0.8rem" }}>
-                  {Object.entries(clinicalData?.acoustic_biomarkers?.mfcc || {}).map(([coef, stats], idx) => (
-                    <div key={idx} style={{ padding: "8px", background: "#f9fafb", borderRadius: "6px", border: "1px solid #e5e7eb" }}>
-                      <div style={{ fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
-                        {coef.toUpperCase().replace("_", " ")}
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", color: "#6b7280" }}>
-                        <span>Mean:</span>
-                        <span style={{ fontWeight: 500, color: "#111827" }}>{stats.mean}</span>
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", color: "#6b7280" }}>
-                        <span>Std:</span>
-                        <span style={{ fontWeight: 500, color: "#111827" }}>{stats.std}</span>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>
@@ -887,114 +550,37 @@ export default function TranscriptCard({
               </span>
             </div>
 
-            {/* Check if predictions are null (awaiting model integration) */}
-            {(!clinicalData?.dementia_prediction || 
-              Object.values(clinicalData.dementia_prediction).every(val => val === null)) ? (
-              
-              <div className="clinical-disclaimer-card" style={{ 
-                background: "#f0fdf4", 
-                borderLeftColor: "#16a34a", 
-                color: "#166534", 
-                display: "flex", 
-                flexDirection: "column", 
-                alignItems: "center", 
-                justifyContent: "center", 
-                padding: "48px 24px", 
-                textAlign: "center",
-                gap: "16px",
-                borderRadius: "8px",
-                marginTop: "24px"
-              }}>
-                <Brain style={{ width: "4rem", height: "4rem", color: "#16a34a", animation: "pulse 2s infinite" }} />
-                <h4 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0, color: "#14532d" }}>
-                  Awaiting Model Integration
-                </h4>
-                <p style={{ fontSize: "0.9rem", color: "#166534", maxWidth: "480px", margin: 0, lineHeight: 1.5 }}>
-                  The Feature Fusion Engine has successfully compiled all 45+ transcript and acoustic biomarkers. The system is fully integrated and waiting for the founder's research-grade dementia classifier model.
-                </p>
-                <div style={{ fontSize: "0.8rem", background: "#dcfce7", color: "#15803d", padding: "6px 12px", borderRadius: "20px", fontWeight: 500 }}>
-                  Standardized Feature Vector Ready
+            <div className="clinical-disclaimer-card" style={{ 
+              background: "#f0fdf4", 
+              borderLeftColor: "#16a34a", 
+              color: "#166534", 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              padding: "40px 24px", 
+              textAlign: "center",
+              gap: "12px",
+              borderRadius: "8px",
+              marginTop: "24px"
+            }}>
+              <Brain style={{ width: "3.5rem", height: "3.5rem", color: "#16a34a", animation: "pulse 2s infinite" }} />
+              <h4 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0, color: "#14532d" }}>
+                Awaiting Dementia Model
+              </h4>
+              <p style={{ fontSize: "0.875rem", color: "#166534", maxWidth: "480px", margin: 0, lineHeight: 1.5 }}>
+                The feature vector has been compiled and is ready for model evaluation.
+              </p>
+            </div>
+
+            <div className="analytics-grid" style={{ marginTop: "24px" }}>
+              {["Language", "Fluency", "Attention", "Orientation", "Memory"].map((domain) => (
+                <div key={domain} className="analytics-card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100px", padding: "16px" }}>
+                  <h5 style={{ margin: 0, fontSize: "0.9rem", fontWeight: 600, color: "var(--text-primary)" }}>{domain}</h5>
+                  <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontStyle: "italic" }}>Waiting for model...</span>
                 </div>
-              </div>
-
-            ) : (
-
-              <div className="analytics-grid" style={{ marginTop: "24px" }}>
-                {/* When predictions become available later, render progress bars/cards */}
-                <div className="analytics-card" style={{ gridColumn: "span 2" }}>
-                  <h4 className="analytics-card-title">
-                    <Sparkles className="analytics-card-icon" />
-                    Cognitive Domains Prediction Results
-                  </h4>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginTop: "16px" }}>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <div className="emotion-bar-row">
-                        <div className="emotion-label-row">
-                          <strong>Language Index</strong>
-                          <span>{Math.round(clinicalData.dementia_prediction.language * 100)}%</span>
-                        </div>
-                        <div className="emotion-bar-track">
-                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.language * 100)}%`, backgroundColor: "#4f46e5" }}></div>
-                        </div>
-                      </div>
-
-                      <div className="emotion-bar-row">
-                        <div className="emotion-label-row">
-                          <strong>Fluency Index</strong>
-                          <span>{Math.round(clinicalData.dementia_prediction.fluency * 100)}%</span>
-                        </div>
-                        <div className="emotion-bar-track">
-                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.fluency * 100)}%`, backgroundColor: "#06b6d4" }}></div>
-                        </div>
-                      </div>
-
-                      <div className="emotion-bar-row">
-                        <div className="emotion-label-row">
-                          <strong>Attention Index</strong>
-                          <span>{Math.round(clinicalData.dementia_prediction.attention * 100)}%</span>
-                        </div>
-                        <div className="emotion-bar-track">
-                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.attention * 100)}%`, backgroundColor: "#eab308" }}></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <div className="emotion-bar-row">
-                        <div className="emotion-label-row">
-                          <strong>Orientation Index</strong>
-                          <span>{Math.round(clinicalData.dementia_prediction.orientation * 100)}%</span>
-                        </div>
-                        <div className="emotion-bar-track">
-                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.orientation * 100)}%`, backgroundColor: "#8b5cf6" }}></div>
-                        </div>
-                      </div>
-
-                      <div className="emotion-bar-row">
-                        <div className="emotion-label-row">
-                          <strong>Memory Recall Index</strong>
-                          <span>{Math.round(clinicalData.dementia_prediction.memory * 100)}%</span>
-                        </div>
-                        <div className="emotion-bar-track">
-                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.memory * 100)}%`, backgroundColor: "#ec4899" }}></div>
-                        </div>
-                      </div>
-
-                      <div className="emotion-bar-row">
-                        <div className="emotion-label-row">
-                          <strong>Overall Assessment Score</strong>
-                          <span>{Math.round(clinicalData.dementia_prediction.overall * 100)}%</span>
-                        </div>
-                        <div className="emotion-bar-track">
-                          <div className="emotion-bar-fill" style={{ width: `${Math.round(clinicalData.dementia_prediction.overall * 100)}%`, backgroundColor: "#10b981" }}></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            )}
+              ))}
+            </div>
           </div>
         </div>
       )}
